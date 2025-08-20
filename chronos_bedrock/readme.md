@@ -1,8 +1,16 @@
 # Zero-Shot Time Series Forecasting with Chronos-Bolt using Amazon Bedrock and ClickHouse
 
+
+![png](https://clickhouse-aws-ml-blog.s3.eu-west-2.amazonaws.com/chronos_bedrock/architecture_diagram.png)
+
+
+
 Chronos is a family of foundation models for probabilistic time series forecasting ...
 
 ![png](https://clickhouse-aws-ml-blog.s3.eu-west-2.amazonaws.com/chronos_bedrock/chronos_architecture.png)
+
+
+
 
 
 ## 1. Create the Bedrock model endpoint
