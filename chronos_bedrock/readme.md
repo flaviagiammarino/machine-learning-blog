@@ -1,9 +1,9 @@
 # Zero-Shot Time Series Forecasting with Chronos-Bolt using Amazon Bedrock and ClickHouse
 
-## Overview
-
 <image src="https://clickhouse-aws-ml-blog.s3.eu-west-2.amazonaws.com/chronos_bedrock/architecture_diagram.png" style="width:80%">
 </image>
+
+## Overview
 
 The emergence of large language models (LLMs) with zero-shot generalization capabilities 
 in sequence modelling tasks has led to the development of foundation models for time series 
@@ -13,16 +13,16 @@ By converting the time series into a sequence of numerical strings, LLMs' capabi
 extrapolate future patterns from the context data can be leveraged for time series 
 forecasting tasks.
 
-Foundation models for time series forecasting eliminate the need for domain-specific 
-model development, allowing organizations to deploy accurate forecasting solutions 
-more quickly.
-
 In this post, we will focus on Chronos, a family of foundation models for probabilistic 
 time series forecasting developed by Amazon. Chronos generates accurate zero-shot forecasts, 
-that is without any fine-tuning or task-specific adjustments. 
+that is without any fine-tuning or task-specific adjustments, allowing organizations 
+to deploy accurate forecasting solutions more quickly.
 
-Differently from other foundation models for time series forecasting, that use LLMs pre-trained 
-on text data, Chronos trains the LLM from scratch on a large collection of time series datasets.
+...
+
+
+...
+
 
 ...
 
@@ -215,7 +215,7 @@ docker tag $algorithm_name:latest $aws_account_id.dkr.ecr.$region.amazonaws.com/
 docker push $aws_account_id.dkr.ecr.$region.amazonaws.com/$algorithm_name:latest
 ```
 
-### 3. Test the Lambda function and compare the forecasts to the historical data stored in ClickHouse
+### 3. Invoke the Lambda function and generate the forecasts
 
 ```python
 import io
@@ -322,6 +322,8 @@ forecasts = invoke_lambda_function(
     function_name=function_name
 )
 ```
+
+### 4. Compare the forecasts to the historical data stored in ClickHouse
 
 ```python
 clickhouse_client = clickhouse_connect.get_client(
