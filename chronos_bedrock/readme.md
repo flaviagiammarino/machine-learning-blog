@@ -1,19 +1,34 @@
 # Zero-Shot Time Series Forecasting with Chronos-Bolt using Amazon Bedrock and ClickHouse
 
+## Overview
 
-![png](https://clickhouse-aws-ml-blog.s3.eu-west-2.amazonaws.com/chronos_bedrock/architecture_diagram.png)
+<image src="https://clickhouse-aws-ml-blog.s3.eu-west-2.amazonaws.com/chronos_bedrock/architecture_diagram.png" style="width:80%">
+</image>
 
+The emergence of large language models (LLMs) with zero-shot generalization capabilities 
+in sequence modelling tasks has led to the development of foundation models for time series 
+forecasting based on LLM architectures.
 
+By converting the time series into a sequence of numerical strings, LLMs' capability to 
+extrapolate future patterns from the context data can be leveraged for time series 
+forecasting tasks.
 
-Chronos is a family of foundation models for probabilistic time series forecasting ...
+Foundation models for time series forecasting eliminate the need for domain-specific 
+model development, allowing organizations to deploy accurate forecasting solutions 
+more quickly.
 
-![png](https://clickhouse-aws-ml-blog.s3.eu-west-2.amazonaws.com/chronos_bedrock/chronos_architecture.png)
+In this post, we will focus on Chronos, a family of foundation models for probabilistic 
+time series forecasting developed by Amazon. Chronos generates accurate zero-shot forecasts, 
+that is without any fine-tuning or task-specific adjustments. 
 
+Differently from other foundation models for time series forecasting, that use LLMs pre-trained 
+on text data, Chronos trains the LLM from scratch on a large collection of time series datasets.
 
+...
 
+## Solution
 
-
-## 1. Create the Bedrock model endpoint
+### 1. Create the Bedrock model endpoint
 ```python
 import boto3
 
@@ -35,7 +50,7 @@ response = bedrock_client.create_marketplace_model_endpoint(
 bedrock_endpoint_arn = response["marketplaceModelEndpoint"]["endpointArn"]
 ```
 
-## 2. Create the Lambda function for invoking the model endpoint with ClickHouse data
+### 2. Create the Lambda function for invoking the model endpoint with ClickHouse data
 
 **`app.py`**
 
@@ -200,7 +215,7 @@ docker tag $algorithm_name:latest $aws_account_id.dkr.ecr.$region.amazonaws.com/
 docker push $aws_account_id.dkr.ecr.$region.amazonaws.com/$algorithm_name:latest
 ```
 
-## 3. Test the Lambda function and compare the forecasts to the historical data stored in ClickHouse
+### 3. Test the Lambda function and compare the forecasts to the historical data stored in ClickHouse
 
 ```python
 import io
@@ -307,8 +322,6 @@ forecasts = invoke_lambda_function(
     function_name=function_name
 )
 ```
-
-
 
 ```python
 clickhouse_client = clickhouse_connect.get_client(
