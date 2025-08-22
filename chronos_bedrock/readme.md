@@ -37,23 +37,19 @@ doesn't require any domain adaptation, the same solution can be applied to any o
 <image src="https://clickhouse-aws-ml-blog.s3.eu-west-2.amazonaws.com/chronos_bedrock/total_load_data.png" style="width:50%">
 </image>
 
----
 **Note:** To be able to run the code below, you will need to have [Boto3](https://boto3.amazonaws.com/v1/documentation/api/latest/index.html) 
 and the [AWS-CLI](https://docs.aws.amazon.com/cli/latest/) installed on your machine. 
 You will also need to update several variables in the code to reflect your AWS 
-configuration - such as your AWS account number, region, service roles, etc. - as will be outlined below. 
----
+configuration - such as your AWS account number, region, service roles, etc. - as will be outlined below.
 
 ### 1. Create the Bedrock endpoint
 We start by deploying Chronos-Bolt to a Bedrock endpoint hosted on a CPU EC2 instance. 
 This can be done in Python using the code below, or directly from the Bedrock console. 
 
----
 **Note:** If using the code below, make sure to replace the following variables: 
 
 - `"<bedrock-marketplace-arn>"`: The Bedrock marketplace ARN of Chronos-Bolt (Base) model. 
-- `"<bedrock-execution-role>"`: The Bedrock execution role ARN. 
----
+- `"<bedrock-execution-role>"`: The Bedrock execution role ARN.
 
 ```python
 import boto3
@@ -100,14 +96,12 @@ The Bedrock endpoint response includes the predicted mean and the predicted 10th
 of the time series at each future time step, which the Lambda function returns to the user in JSON format 
 together with the corresponding timestamps.
 
----
 **Note:** Before deploying the Lambda function, make sure to replace the following variables: 
 
 - `"<clickhouse-host>"`: The ClickHouse host. 
 - `"<clickhouse-user>"`: The ClickHouse username. 
 - `"<clickhouse-password>"`: The ClickHouse password. 
 - `"<bedrock-endpoint-arn>"`: The Bedrock endpoint ARN. 
----
 
 **`app.py`**
 
@@ -261,13 +255,11 @@ CMD ["app.handler"]
 When all the files are ready, we can build the Docker image and push it to ECR 
 with the AWS-CLI as shown in the `build_and_push.sh` script below.
 
----
 **Note:** Before running the script, make sure to replace the following variables: 
 
 -`"aws-account-id>"`: The AWS account number. 
 -`"<ecr-repository-region>"`:  The region of the ECR repository. 
--`"<ecr-repository-name>"`: The name of the ECR repository.  
----
+-`"<ecr-repository-name>"`: The name of the ECR repository. 
 
 **`build_and_push.sh`**
 
