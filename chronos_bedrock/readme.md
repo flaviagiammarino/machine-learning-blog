@@ -43,9 +43,9 @@ such as your AWS account number, region, service roles, etc. - as will be outlin
 
 ### 1. Create the Bedrock endpoint
 We start by deploying Chronos-Bolt to a Bedrock endpoint hosted on a CPU EC2 instance. 
-This can be done manually in the Bedrock console, or in Python using the code below.
-If using the code below, make sure to replace the following variables:
-- `"<bedrock-marketplace-arn>"`: the Bedrock marketplace ARN of Chronos-Bolt,
+This can be done in Python using the code below, or directly from the Bedrock console. 
+If using the code below, make sure to replace the following variables: 
+- `"<bedrock-marketplace-arn>"`: the Bedrock marketplace ARN of Chronos-Bolt (Base) model,
 - `"<bedrock-execution-role>"`: the Bedrock execution role ARN.
 
 ```python
@@ -79,7 +79,7 @@ In order to create the Lambda function's Docker image in ECR, we need the follow
 - `requirements.txt`: The list of dependencies of `app.py` which need to be installed in the Docker container.
 - `Dockerfile`: The file containing the instructions to build the Docker image.
 
-The Python code of the Lambda function (`app.py`) is provided in the script below.
+The Python code of the Lambda function (`app.py`) is reported below. 
 The Lambda function takes as input the following parameters: 
 - `initialization_timestamp`: The first timestamp for which the forecasts should be generated.
 - `frequency`: The frequency of the time series, in number of minutes.
@@ -87,10 +87,11 @@ The Lambda function takes as input the following parameters:
 - `prediction_length`: The number of future time series values to forecast.
 
 The Lambda function connects to ClickHouse using [ClickHouse Connect](https://clickhouse.com/docs/integrations/python) 
-and loads the context data using ClickHouse Connect's `query_df` method, which returns the output as a Pandas Dataframe. 
-After that, the Lambda function invokes the Bedrock endpoint with the ClickHouse context data.
-The Bedrock endpoint response includes the predicted mean and the predicted 10th, 50th (median) and 90th percentiles at each future time step.
-The Lambda function adds a time index to the predictions and returns them to the user in JSON format.
+and loads the context data using ClickHouse Connect's `query_df` method. 
+After that, the Lambda function invokes the Bedrock endpoint with the context data.
+The Bedrock endpoint response includes the predicted mean and the predicted 10th, 50th (median) and 90th percentiles 
+of the time series at each future time step, which the Lambda function returns to the user in JSON format 
+together with the corresponding timestamps.
 
 Before deploying the Lambda function, make sure to replace the following variables:
 - `"<clickhouse-host>"`: The ClickHouse host.
@@ -268,16 +269,14 @@ docker tag $algorithm_name:latest $aws_account_id.dkr.ecr.$region.amazonaws.com/
 
 docker push $aws_account_id.dkr.ecr.$region.amazonaws.com/$algorithm_name:latest
 ```
-Next, we can create the Lambda function using Boto3, the AWS-CLI or directly from the Lambda console.
+After the Docker image has been pushed to ECR, we can create the Lambda function using Boto3, the AWS-CLI or directly from the Lambda console.
 
 ### 3. Invoke the Lambda function and generate the forecasts
 
 After the Lambda function has been created, we can invoke it to generate the forecasts.
 
-The code below defines the `invoke_lambda_function` Python function which calls 
-the Lambda function with the inputs discussed in Section 2 and casts the Lambda 
-function's JSON output to Pandas Dataframe. 
-
+The code below defines a Python function which invokes the Lambda function with the 
+inputs discussed in Section 2 and casts the Lambda function's JSON output to Pandas Dataframe.
 After that, the code makes two invocations: the first time it requests the forecasts over a 
 past time window for which historical data is already available, which allows us to assess how close the forecasts are 
 to the actual data, while the second time it requests the forecasts over a future time window for which
@@ -385,7 +384,8 @@ forecasts = invoke_lambda_function(
 ```
 
 ### 4. Compare the forecasts to the historical data stored in ClickHouse
-Now that the forecasts have been generated, 
+Now that the forecasts have been generated, we can compare them to the historical data stored in ClickHouse. 
+We again use ClickHouse Connect to query the database and retrieve the results directly into a Pandas DataFrame. 
 
 ```python
 import pandas as pd
@@ -420,6 +420,8 @@ output = pd.merge(
 )
 ```
 
-<image src="(https://clickhouse-aws-ml-blog.s3.eu-west-2.amazonaws.com/chronos_bedrock/chronos_bedrock_zero_shot_forecasts.png" style="width:90%">
+The results show that the forecasts are reasonably in line with the historical data.
+
+<image src="https://clickhouse-aws-ml-blog.s3.eu-west-2.amazonaws.com/chronos_bedrock/chronos_bedrock_zero_shot_forecasts.png" style="width:90%">
 </image>
 
