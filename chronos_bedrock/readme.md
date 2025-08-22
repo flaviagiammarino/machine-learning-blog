@@ -1,4 +1,4 @@
-# Zero-Shot Time Series Forecasting with Chronos-Bolt using Amazon Bedrock and ClickHouse
+# Zero-Shot Time Series Forecasting with Chronos using Amazon Bedrock and ClickHouse
 
 <image src="https://clickhouse-aws-ml-blog.s3.eu-west-2.amazonaws.com/chronos_bedrock/architecture_diagram.png" style="width:80%">
 </image>
@@ -6,27 +6,34 @@
 ## Overview
 
 The emergence of large language models (LLMs) with zero-shot generalization capabilities 
-in sequence modelling tasks has led to the development of foundation models for time series 
-forecasting based on LLM architectures.
+in sequence modelling tasks has led to the development of time series foundation models (TSFMs) 
+based on LLM architectures.
+By converting the time series into a sequence of numerical strings, TSFMs can leverage LLMs' 
+capability to extrapolate future patterns from the context data.
+TSFMs eliminate the traditional need for domain-specific model development, 
+allowing organizations to deploy accurate forecasting solutions faster.
 
-By converting the time series into a sequence of numerical strings, LLMs' capability to 
-extrapolate future patterns from the context data can be leveraged for time series 
-forecasting tasks.
+In this post, we will focus on Chronos, a family of TSFMs developed by Amazon.
+In contrast to other TSFMs, that rely on LLMs pre-trained on text, Chronos models 
+are trained from scratch on a large collection of time series datasets. 
+Moreover, unlike other TSFMs, which require fine-tuning on in-domain data,
+Chronos models generate accurate zero-shot forecasts, without any task-specific adjustments. 
 
-In this post, we will focus on Chronos, a family of foundation models for probabilistic 
-time series forecasting developed by Amazon. Chronos generates accurate zero-shot forecasts, 
-that is without any fine-tuning or task-specific adjustments, allowing organizations 
-to deploy accurate forecasting solutions more quickly.
+Recently, the Chronos family of TSFMs has been extended with Chronos-Bolt, 
+a faster, more accurate, and more memory-efficient Chronos model that can 
+also be used on CPU. Chronos-Bolt is available in AutoGluon-TimeSeries,
+Amazon SageMaker JumpStart and Amazon Bedrock.
 
-...
-
-
-...
-
-
-...
+In the rest of this post, we will walk through a practical example of using 
+Chronos-Bolt with time series data stored in ClickHouse. We will create an
+Amazon Bedrock endpoint, then build a Lambda function that invokes 
+the Amazon Bedrock endpoint with context data queried from ClickHouse and 
+returns the Chronos-Bolt forecasts. 
 
 ## Solution
+In this particular example, we will forecast the Italian electricity system's total demand, 
+which we downloaded from [Terna's data portal](https://dati.terna.it/en/download-center#/load/total-load) 
+and stored in a table in ClickHouse, but the same solution can be applied to any other time series. 
 
 ### 1. Create the Bedrock model endpoint
 ```python
