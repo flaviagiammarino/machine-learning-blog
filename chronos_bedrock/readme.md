@@ -82,7 +82,7 @@ In order to create the Lambda function's Docker image in Elastic Container Regis
 - `requirements.txt`: The list of dependencies that need to be installed in the Docker container.
 - `Dockerfile`: The file containing the instructions to build the Docker image.
 
-The Python code of the Lambda function (`app.py`) is reported below. 
+The Python code of the Lambda function is reported below. 
 The Lambda function takes as input the following parameters: 
 - `initialization_timestamp`: The first timestamp for which the forecasts should be generated.
 - `frequency`: The frequency of the time series, in number of minutes.
@@ -90,7 +90,7 @@ The Lambda function takes as input the following parameters:
 - `prediction_length`: The number of future time series values (on and after `initialization_timestamp`) to forecast.
 
 The Lambda function connects to ClickHouse using [ClickHouse Connect](https://clickhouse.com/docs/integrations/python) 
-and loads the context data using ClickHouse Connect's `query_df` method. 
+and loads the context data using the `query_df` method, which returns the query output in a Pandas Dataframe. 
 After that, the Lambda function invokes the Bedrock endpoint with the context data. 
 The Bedrock endpoint response includes the predicted mean and the predicted 10th, 50th (median) and 90th percentiles 
 of the time series at each future time step, which the Lambda function returns to the user in JSON format 
