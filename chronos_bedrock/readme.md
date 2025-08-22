@@ -77,12 +77,14 @@ bedrock_endpoint_arn = response["marketplaceModelEndpoint"]["endpointArn"]
 
 ### 2. Create the Lambda function for invoking the Bedrock endpoint with ClickHouse data
 After that, we build a Lambda function for invoking the Bedrock endpoint with time series data stored in ClickHouse.
+
+#### 2.1 Create the Docker image
+
 In order to create the Lambda function's Docker image in Elastic Container Registry (ECR), we need the following files: 
 - `app.py`: The Python code of the Lambda function.
 - `requirements.txt`: The list of dependencies that need to be installed in the Docker container.
 - `Dockerfile`: The file containing the instructions to build the Docker image.
 
-#### 2.1 Create the Docker image
 ##### 2.1.1 `app.py`
 
 The Lambda function takes as input the following parameters: 
