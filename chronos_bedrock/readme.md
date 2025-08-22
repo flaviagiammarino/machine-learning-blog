@@ -255,11 +255,11 @@ CMD ["app.handler"]
 When all the files are ready, we can build the Docker image and push it to ECR 
 with the AWS-CLI as shown in the `build_and_push.sh` script below.
 
-**Note:** Before running the script, make sure to replace the following variables: 
+**Note:** Before running the script, make sure to replace the following variables:  
 
--`"aws-account-id>"`: The AWS account number. 
--`"<ecr-repository-region>"`:  The region of the ECR repository. 
--`"<ecr-repository-name>"`: The name of the ECR repository. 
+- `"aws-account-id>"`: The AWS account number. 
+- `"<ecr-repository-region>"`:  The region of the ECR repository. 
+- `"<ecr-repository-name>"`: The name of the ECR repository. 
 
 **`build_and_push.sh`**
 
