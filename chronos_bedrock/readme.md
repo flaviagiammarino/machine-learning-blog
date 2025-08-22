@@ -82,7 +82,6 @@ In order to create the Lambda function's Docker image in Elastic Container Regis
 - `requirements.txt`: The list of dependencies that need to be installed in the Docker container.
 - `Dockerfile`: The file containing the instructions to build the Docker image.
 
-The Python code of the Lambda function is reported below. 
 The Lambda function takes as input the following parameters: 
 - `initialization_timestamp`: The first timestamp for which the forecasts should be generated.
 - `frequency`: The frequency of the time series, in number of minutes.
@@ -95,6 +94,8 @@ After that, the Lambda function invokes the Bedrock endpoint with the context da
 The Bedrock endpoint response includes the predicted mean and the predicted 10th, 50th (median) and 90th percentiles 
 of the time series at each future time step, which the Lambda function returns to the user in JSON format 
 together with the corresponding timestamps.
+
+The Python code of the Lambda function is reported below. 
 
 **Note:** Before deploying the Lambda function, make sure to replace the following variables: 
 
@@ -410,6 +411,7 @@ We again use ClickHouse Connect to query the database and retrieve the results d
 import pandas as pd
 import clickhouse_connect
 
+# Create the ClickHouse client
 clickhouse_client = clickhouse_connect.get_client(
     host="<clickhouse-host>",
     user="<clickhouse-user>",
@@ -417,6 +419,7 @@ clickhouse_client = clickhouse_connect.get_client(
     secure=True
 )
 
+# Load the historical data from ClickHouse
 df = clickhouse_client.query_df(
     """
     select
@@ -431,6 +434,7 @@ df = clickhouse_client.query_df(
     """
 )
 
+# Outer join the historical data with the model outputs 
 output = pd.merge(
     left=df,
     right=pd.concat([predictions, forecasts], axis=0),
@@ -443,7 +447,8 @@ The results show that the forecasts are closely aligned with the actual data,
 demonstrating the model’s ability to generalize effectively in a zero-shot setting.
 Despite a holiday occurring on the last Friday of the context window, 
 the model produces accurate forecasts for the subsequent Sunday 
-and correctly anticipates an increase in energy demand on the following Monday.
+and correctly anticipates an increase in energy demand on the following Monday,
+highlighting its strength in capturing complex temporal patterns. 
 
 <image src="https://clickhouse-aws-ml-blog.s3.eu-west-2.amazonaws.com/chronos_bedrock/chronos_bedrock_zero_shot_forecasts.png" style="width:90%">
 </image>
