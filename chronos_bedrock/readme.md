@@ -82,6 +82,9 @@ In order to create the Lambda function's Docker image in Elastic Container Regis
 - `requirements.txt`: The list of dependencies that need to be installed in the Docker container.
 - `Dockerfile`: The file containing the instructions to build the Docker image.
 
+#### 2.1 Create the Docker image
+##### 2.1.1 `app.py`
+
 The Lambda function takes as input the following parameters: 
 - `initialization_timestamp`: The first timestamp for which the forecasts should be generated.
 - `frequency`: The frequency of the time series, in number of minutes.
@@ -103,8 +106,6 @@ The Python code of the Lambda function is reported below.
 - `"<clickhouse-user>"`: The ClickHouse username. 
 - `"<clickhouse-password>"`: The ClickHouse password. 
 - `"<bedrock-endpoint-arn>"`: The Bedrock endpoint ARN. 
-
-**`app.py`**
 
 ```python
 import json
@@ -229,9 +230,9 @@ def handler(event, context):
     }
 ```
 
-The `requirements.txt` file and the `Dockerfile` are reported below.
+##### 2.1.2 `requirements.txt`
 
-**`requirements.txt`**
+The `requirements.txt` file with the list of dependencies is reported below.
 
 ```
 boto3==1.34.84
@@ -239,7 +240,9 @@ clickhouse_connect==0.8.18
 pandas==2.3.1
 ```
 
-**`Dockerfile`**
+##### 2.1.3 `Dockerfile`
+
+The standard `Dockerfile` using the Python 3.12 AWS base image for Lambda is also reported below. 
 
 ```
 FROM amazon/aws-lambda-python:3.12
@@ -253,6 +256,8 @@ COPY app.py ${LAMBDA_TASK_ROOT}
 CMD ["app.handler"]
 ```
 
+#### 2.2 Build the Docker image and push it to ECR
+
 When all the files are ready, we can build the Docker image and push it to ECR 
 with the AWS-CLI as shown in the `build_and_push.sh` script below.
 
@@ -262,7 +267,6 @@ with the AWS-CLI as shown in the `build_and_push.sh` script below.
 - `"<ecr-repository-region>"`:  The region of the ECR repository. 
 - `"<ecr-repository-name>"`: The name of the ECR repository. 
 
-**`build_and_push.sh`**
 
 ```commandline
 aws_account_id="<aws-account-id>"
@@ -277,6 +281,9 @@ docker tag $algorithm_name:latest $aws_account_id.dkr.ecr.$region.amazonaws.com/
 
 docker push $aws_account_id.dkr.ecr.$region.amazonaws.com/$algorithm_name:latest
 ```
+
+#### 2.3 Create the Lambda function
+
 After the Docker image has been pushed to ECR, we can create the Lambda function using Boto3, the AWS-CLI or directly from the Lambda console.
 
 ### 3. Invoke the Lambda function and generate the forecasts
