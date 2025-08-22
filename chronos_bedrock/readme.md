@@ -283,9 +283,9 @@ After the Docker image has been pushed to ECR, we can create the Lambda function
 After the Lambda function has been created, we can invoke it to generate the forecasts.
 
 The code below defines a Python function which invokes the Lambda function with the 
-inputs discussed in Section 2 and casts the Lambda function's JSON output to Pandas Dataframe.
+inputs discussed in the previous section and casts the Lambda function's JSON output to Pandas Dataframe.
 
-After that, the code makes two invocations: the first time it requests the forecasts over a 
+Next, the code makes two invocations: the first time it requests the forecasts over a 
 past time window for which historical data is already available, which allows us to assess how 
 close the forecasts are to the actual data, while the second time it requests the forecasts 
 over a future time window for which the data is not yet available. 
@@ -392,7 +392,7 @@ forecasts = invoke_lambda_function(
 )
 ```
 
-**`preditions`**
+**`predictions`**
 
 <image src="https://clickhouse-aws-ml-blog.s3.eu-west-2.amazonaws.com/chronos_bedrock/chronos_bedrock_predictions_table.png" style="width:70%">
 </image>
