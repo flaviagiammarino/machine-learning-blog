@@ -40,8 +40,8 @@ doesn't require any domain adaptation, the same solution can be applied to any o
 ---
 **Note:** To be able to run the code below, you will need to have [Boto3](https://boto3.amazonaws.com/v1/documentation/api/latest/index.html) 
 and the [AWS-CLI](https://docs.aws.amazon.com/cli/latest/) installed on your machine. 
-You will also need to update several variables in the code to reflect your AWS configuration 
-- such as your AWS account number, region, service roles, etc. - as will be outlined below. 
+You will also need to update several variables in the code to reflect your AWS 
+configuration - such as your AWS account number, region, service roles, etc. - as will be outlined below. 
 ---
 
 ### 1. Create the Bedrock endpoint
