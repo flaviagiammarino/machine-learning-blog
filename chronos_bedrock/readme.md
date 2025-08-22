@@ -42,30 +42,33 @@ You will also need to update several variables in the code to reflect your AWS c
 such as your AWS account number, region, service roles, etc. - as will be outlined below. 
 
 ### 1. Create the Bedrock endpoint
-We start by deploying Chronos-Bolt to a Bedrock endpoint. 
+We start by deploying Chronos-Bolt to a Bedrock endpoint hosted on a CPU EC2 instance. 
 This can be done manually in the Bedrock console, or in Python using the code below.
 If using the code below, make sure to replace the following variables:
-- `"<bedrock-marketplace-arn>"`: the Chronos-Bolt Bedrock marketplace ARN,
+- `"<bedrock-marketplace-arn>"`: the Bedrock marketplace ARN of Chronos-Bolt,
 - `"<bedrock-execution-role>"`: the Bedrock execution role ARN.
 
 ```python
 import boto3
 
+# Create the Bedrock client
 bedrock_client = boto3.client("bedrock")
 
+# Create the Bedrock endpoint
 response = bedrock_client.create_marketplace_model_endpoint(
-    modelSourceIdentifier="<bedrock-marketplace-arn>",
+    modelSourceIdentifier="<bedrock-marketplace-arn>",  
     endpointConfig={
         "sageMaker": {
-            "initialInstanceCount": 1,
-            "instanceType": "ml.m5.4xlarge",
-            "executionRole": "<bedrock-execution-role>"
+            "initialInstanceCount": 1,  
+            "instanceType": "ml.m5.4xlarge",  
+            "executionRole": "<bedrock-execution-role>" 
         }
     },
-    acceptEula=True,
     endpointName="chronos-bolt-base-endpoint",
+    acceptEula=True,
 )
 
+# Get the Bedrock endpoint ARN
 bedrock_endpoint_arn = response["marketplaceModelEndpoint"]["endpointArn"]
 ```
 
