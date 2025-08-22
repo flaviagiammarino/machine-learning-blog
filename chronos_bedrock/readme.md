@@ -1,23 +1,23 @@
 # Zero-Shot Time Series Forecasting with Chronos using Amazon Bedrock and ClickHouse
 
-<image src="https://clickhouse-aws-ml-blog.s3.eu-west-2.amazonaws.com/chronos_bedrock/architecture_diagram.png" style="width:80%">
+<image src="https://clickhouse-aws-ml-blog.s3.eu-west-2.amazonaws.com/chronos_bedrock/architecture_diagram.png" style="width:90%">
 </image>
 
 ## Overview
 
 The emergence of large language models (LLMs) with zero-shot generalization capabilities 
 in sequence modelling tasks has led to the development of time series foundation models (TSFMs) 
-based on LLM architectures.
-By converting the time series into a sequence of numerical strings, TSFMs can leverage LLMs' 
-capability to extrapolate future patterns from the context data.
-TSFMs eliminate the traditional need for domain-specific model development, 
-allowing organizations to deploy accurate forecasting solutions faster.
+based on LLM architectures. 
+By converting time series into strings of digits, TSFMs can leverage LLMs' capability to 
+extrapolate future patterns from the context data.
+TSFMs eliminate the traditional need for domain-specific model 
+development, allowing organizations to deploy accurate time series solutions faster.
 
-In this post, we will focus on Chronos, a family of TSFMs developed by Amazon.
+In this post, we will focus on Chronos, a family of TSFMs for time series forecasting developed by Amazon.
 In contrast to other TSFMs, that rely on LLMs pre-trained on text, Chronos models 
-are trained from scratch on a large collection of time series datasets. 
+are trained from scratch on a large collection of time series datasets.
 Moreover, unlike other TSFMs, which require fine-tuning on in-domain data,
-Chronos models generate accurate zero-shot forecasts, without any task-specific adjustments. 
+Chronos models generate accurate zero-shot forecasts, without any task-specific adjustments.
 
 Recently, the Chronos family of TSFMs has been extended with Chronos-Bolt, 
 a faster, more accurate, and more memory-efficient Chronos model that can 
@@ -25,29 +25,41 @@ also be used on CPU. Chronos-Bolt is available in AutoGluon-TimeSeries,
 Amazon SageMaker JumpStart and Amazon Bedrock.
 
 In the rest of this post, we will walk through a practical example of using 
-Chronos-Bolt with time series data stored in ClickHouse. We will create an
-Amazon Bedrock endpoint, then build a Lambda function that invokes 
-the Amazon Bedrock endpoint with context data queried from ClickHouse and 
+Chronos-Bolt with time series data stored in ClickHouse. We will create a 
+Bedrock endpoint, then build a Lambda function that invokes 
+the Bedrock endpoint with context data queried from ClickHouse and 
 returns the Chronos-Bolt forecasts. 
 
 ## Solution
-In this particular example, we will forecast the Italian electricity system's total demand, 
+In this particular example, we will work with the 15-minute time series of the Italian electricity system's total demand, 
 which we downloaded from [Terna's data portal](https://dati.terna.it/en/download-center#/load/total-load) 
-and stored in a table in ClickHouse, but the same solution can be applied to any other time series. 
+and stored in a table in ClickHouse. However, given that Chronos-Bolt doesn't require any domain adaptation, 
+the same solution can be applied to any other time series. 
 
-### 1. Create the Bedrock model endpoint
+**Note:** To be able to run the code below, you will need to have [Boto3](https://boto3.amazonaws.com/v1/documentation/api/latest/index.html) 
+and the [AWS-CLI](https://docs.aws.amazon.com/cli/latest/) installed on your machine. 
+You will also need to update several variables in the code to reflect your AWS configuration - 
+such as your AWS account number, region, service roles, etc. - as will be outlined below. 
+
+### 1. Create the Bedrock endpoint
+We start by deploying Chronos-Bolt to a Bedrock endpoint. 
+This can be done manually in the Bedrock console, or in Python using the code below.
+If using the code below, make sure to replace the following variables:
+- `"<bedrock-marketplace-arn>"`: the Chronos-Bolt Bedrock marketplace ARN,
+- `"<bedrock-execution-role>"`: the Bedrock execution role ARN.
+
 ```python
 import boto3
 
 bedrock_client = boto3.client("bedrock")
 
 response = bedrock_client.create_marketplace_model_endpoint(
-    modelSourceIdentifier=f"arn:aws:sagemaker:'<bedrock-region>':aws:hub-content/SageMakerPublicHub/Model/autogluon-forecasting-chronos-bolt-base/2.0.6",
+    modelSourceIdentifier="<bedrock-marketplace-arn>",
     endpointConfig={
         "sageMaker": {
             "initialInstanceCount": 1,
             "instanceType": "ml.m5.4xlarge",
-            "executionRole": '<bedrock-execution-role>'
+            "executionRole": "<bedrock-execution-role>"
         }
     },
     acceptEula=True,
@@ -57,10 +69,33 @@ response = bedrock_client.create_marketplace_model_endpoint(
 bedrock_endpoint_arn = response["marketplaceModelEndpoint"]["endpointArn"]
 ```
 
-### 2. Create the Lambda function for invoking the model endpoint with ClickHouse data
+### 2. Create the Lambda function for invoking the Bedrock endpoint with ClickHouse data
+After that, we build a Lambda function for invoking the Bedrock endpoint with time series data stored in ClickHouse.
+In order to create the Lambda function's Docker image in ECR, we need the following files:
+- `app.py`: The Python code of the Lambda function.
+- `requirements.txt`: The list of dependencies of `app.py` which need to be installed in the Docker container.
+- `Dockerfile`: The file containing the instructions to build the Docker image.
+
+The Python code of the Lambda function (`app.py`) is provided in the script below.
+The Lambda function takes as input the following parameters: 
+- `initialization_timestamp`: The first timestamp for which the forecasts should be generated.
+- `frequency`: The frequency of the time series, in number of minutes.
+- `context_length`: The number past time series values to use as context.
+- `prediction_length`: The number of future time series values to forecast.
+
+The Lambda function connects to ClickHouse using [ClickHouse Connect](https://clickhouse.com/docs/integrations/python) 
+and loads the context data using ClickHouse Connect's `query_df` method, which returns the output as a Pandas Dataframe. 
+After that, the Lambda function invokes the Bedrock endpoint with the ClickHouse context data.
+The Bedrock endpoint response includes the predicted mean and the predicted 10th, 50th (median) and 90th percentiles at each future time step.
+The Lambda function adds a time index to the predictions and returns them to the user in JSON format.
+
+Before deploying the Lambda function, make sure to replace the following variables:
+- `"<clickhouse-host>"`: The ClickHouse host.
+- `"<clickhouse-user>"`: The ClickHouse username.
+- `"<clickhouse-password>"`: The ClickHouse password.
+- `"<bedrock-endpoint-arn>"`: The Bedrock endpoint ARN.
 
 **`app.py`**
-
 ```python
 import json
 import boto3
@@ -184,6 +219,8 @@ def handler(event, context):
     }
 ```
 
+The `requirements.txt` file and the `Dockerfile` are reported below.
+
 **`requirements.txt`**
 
 ```
@@ -206,12 +243,19 @@ COPY app.py ${LAMBDA_TASK_ROOT}
 CMD ["app.handler"]
 ```
 
+When all the files are ready, we can build the Docker image and push it to ECR 
+with the AWS-CLI as shown in the `build_and_push.sh` script below.
+Before running the script, make sure to replace the following variables:
+-`"aws-account-id>"`: The AWS account number.
+-`"<ecr-repository-region>"`:  The region of the ECR repository.
+-`"<ecr-repository-name>"`: The name of the ECR repository.
+
 **`build_and_push.sh`**
 
 ```commandline
-aws_account_id='<aws-account-id>'
-region='<ecr-repository-region>'
-algorithm_name='<ecr-repository-name>'
+aws_account_id="<aws-account-id>"
+region="<ecr-repository-region>"
+algorithm_name="<ecr-repository-name>"
 
 aws ecr get-login-password --region $region | docker login --username AWS --password-stdin $aws_account_id.dkr.ecr.$region.amazonaws.com
 
@@ -221,18 +265,28 @@ docker tag $algorithm_name:latest $aws_account_id.dkr.ecr.$region.amazonaws.com/
 
 docker push $aws_account_id.dkr.ecr.$region.amazonaws.com/$algorithm_name:latest
 ```
+Next, we can create the Lambda function using Boto3, the AWS-CLI or directly from the Lambda console.
 
 ### 3. Invoke the Lambda function and generate the forecasts
+
+After the Lambda function has been created, we can invoke it to generate the forecasts.
+
+The code below defines the `invoke_lambda_function` Python function which calls 
+the Lambda function with the inputs discussed in Section 2 and casts the Lambda 
+function's JSON output to Pandas Dataframe. 
+
+After that, the code makes two invocations: the first time it requests the forecasts over a 
+past time window for which historical data is already available, which allows us to assess how close the forecasts are 
+to the actual data, while the second time it requests the forecasts over a future time window for which
+the data is not yet available. In both cases the Lambda function is invoked with a context window 
+of 3 weeks to generate one-day-ahead forecasts.
 
 ```python
 import io
 import json
 import boto3
 import pandas as pd
-import clickhouse_connect
-```
 
-```python
 def invoke_lambda_function(
     initialization_timestamp,
     frequency,
@@ -301,16 +355,14 @@ def invoke_lambda_function(
     
     # Return the forecasts
     return forecasts
-```
 
-```python
+# Define the Lambda function name and input parameters
 frequency=15
 context_length=24 * 4 * 7 * 3
 prediction_length=24 * 4
 function_name = "chronos-bedrock"
-```
 
-```python
+# Generate the forecasts over a past time window
 predictions = invoke_lambda_function(
     initialization_timestamp="2025-08-17 00:00:00",
     frequency=frequency,
@@ -318,9 +370,8 @@ predictions = invoke_lambda_function(
     prediction_length=prediction_length,
     function_name=function_name
 )
-```
 
-```python
+# Generate the forecasts over a future time window
 forecasts = invoke_lambda_function(
     initialization_timestamp="2025-08-18 00:00:00",
     frequency=frequency,
@@ -331,8 +382,12 @@ forecasts = invoke_lambda_function(
 ```
 
 ### 4. Compare the forecasts to the historical data stored in ClickHouse
+Now that the forecasts have been generated, 
 
 ```python
+import pandas as pd
+import clickhouse_connect
+
 clickhouse_client = clickhouse_connect.get_client(
     host="<clickhouse-host>",
     user="<clickhouse-user>",
@@ -362,4 +417,6 @@ output = pd.merge(
 )
 ```
 
-![png](https://clickhouse-aws-ml-blog.s3.eu-west-2.amazonaws.com/chronos_bedrock/chronos_bedrock_zero_shot_forecasts.png)
+<image src="(https://clickhouse-aws-ml-blog.s3.eu-west-2.amazonaws.com/chronos_bedrock/chronos_bedrock_zero_shot_forecasts.png" style="width:90%">
+</image>
+
