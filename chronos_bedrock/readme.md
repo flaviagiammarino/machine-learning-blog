@@ -76,7 +76,7 @@ bedrock_endpoint_arn = response["marketplaceModelEndpoint"]["endpointArn"]
 ```
 
 ### 2. Create the Lambda function for invoking the Bedrock endpoint with ClickHouse data
-After that, we build a Lambda function for invoking the Bedrock endpoint with time series data stored in ClickHouse.
+We now build a Lambda function for invoking the Bedrock endpoint with time series data stored in ClickHouse.
 
 #### 2.1 Create the Docker image
 
@@ -117,7 +117,7 @@ import clickhouse_connect
 
 def handler(event, context):
     """
-    Generate zero-shot forecasts with Chronos-Bolt Amazon Bedrock endpoint using data stored in ClickHouse.
+    Generate zero-shot forecasts with Chronos-Bolt (Base) Amazon Bedrock endpoint using data stored in ClickHouse.
 
     Parameters:
     ========================================================================================================
@@ -316,8 +316,8 @@ def invoke_lambda_function(
     function_name
 ):
     """
-    Invoke the Lambda function that generates zero-shot forecasts with Chronos-Bolt
-    Amazon Bedrock endpoint using the data stored in ClickHouse.
+    Invoke the Lambda function that generates zero-shot forecasts with Chronos-Bolt (Base)
+    Amazon Bedrock endpoint using data stored in ClickHouse.
     
     Parameters:
     ========================================================================================================
