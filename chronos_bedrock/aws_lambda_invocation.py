@@ -11,8 +11,8 @@ def invoke_lambda_function(
     function_name
 ):
     """
-    Invoke the Lambda function that generates zero-shot forecasts with Chronos-Bolt
-    Amazon Bedrock endpoint using the data stored in ClickHouse.
+    Invoke the Lambda function that generates zero-shot forecasts with Chronos-Bolt (Base)
+    Amazon Bedrock endpoint using data stored in ClickHouse.
     
     Parameters:
     ========================================================================================================

@@ -1,6 +1,6 @@
 # Zero-Shot Time Series Forecasting with Chronos using Amazon Bedrock and ClickHouse
 
-<image src="https://clickhouse-aws-ml-blog.s3.eu-west-2.amazonaws.com/chronos_bedrock/chronos_bedrock_architecture_diagram.png" style="width:90%">
+<image src="https://machine-learning-blog.s3.eu-west-2.amazonaws.com/chronos_bedrock/architecture_diagram.png" style="width:90%">
 </image>
 
 ## Overview
@@ -34,7 +34,7 @@ doesn't require any domain adaptation, the same solution can be applied to any o
 
 **`total_load_data`**
 
-<image src="https://clickhouse-aws-ml-blog.s3.eu-west-2.amazonaws.com/chronos_bedrock/total_load_data.png" style="width:50%">
+<image src="https://machine-learning-blog.s3.eu-west-2.amazonaws.com/chronos_bedrock/time_series_data.png" style="width:50%">
 </image>
 
 **Note:** To be able to run the code below, you will need to have [Boto3](https://boto3.amazonaws.com/v1/documentation/api/latest/index.html) 
@@ -404,12 +404,12 @@ forecasts = invoke_lambda_function(
 
 **`predictions`**
 
-<image src="https://clickhouse-aws-ml-blog.s3.eu-west-2.amazonaws.com/chronos_bedrock/chronos_bedrock_predictions_table.png" style="width:70%">
+<image src="https://machine-learning-blog.s3.eu-west-2.amazonaws.com/chronos_bedrock/predictions_table.png" style="width:70%">
 </image>
 
 **`forecasts`**
 
-<image src="https://clickhouse-aws-ml-blog.s3.eu-west-2.amazonaws.com/chronos_bedrock/chronos_bedrock_forecasts_table.png" style="width:70%">
+<image src="https://machine-learning-blog.s3.eu-west-2.amazonaws.com/chronos_bedrock/forecasts_table.png" style="width:70%">
 </image>
 
 ### 4. Compare the forecasts to the historical data stored in ClickHouse
@@ -459,5 +459,5 @@ the model produces accurate forecasts for the subsequent Sunday
 and correctly anticipates an increase in energy demand on the following Monday,
 highlighting its strength in capturing complex temporal patterns. 
 
-<image src="https://clickhouse-aws-ml-blog.s3.eu-west-2.amazonaws.com/chronos_bedrock/chronos_bedrock_zero_shot_forecasts.png" style="width:90%">
+<image src="https://machine-learning-blog.s3.eu-west-2.amazonaws.com/chronos_bedrock/forecasts_plot.png" style="width:90%">
 </image>

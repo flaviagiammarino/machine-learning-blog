@@ -5,7 +5,7 @@ import clickhouse_connect
 
 def handler(event, context):
     """
-    Generate zero-shot forecasts with Chronos-Bolt Amazon Bedrock endpoint using data stored in ClickHouse.
+    Generate zero-shot forecasts with Chronos-Bolt (Base) Amazon Bedrock endpoint using data stored in ClickHouse.
 
     Parameters:
     ========================================================================================================
