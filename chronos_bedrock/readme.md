@@ -7,7 +7,7 @@
 
 The emergence of large language models (LLMs) with zero-shot generalization capabilities in sequence modelling 
 tasks has led to the development of time series foundation models (TSFMs) based on LLM architectures. 
-By converting time series into strings of digits, TSFMs can leverage LLMs' capability to extrapolate future 
+By representing time series as sequences of tokens, TSFMs can leverage LLMs' capability to extrapolate future 
 patterns from the context data.
 TSFMs eliminate the traditional need for domain-specific model development, allowing organizations to deploy 
 accurate time series solutions faster.
