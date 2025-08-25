@@ -272,7 +272,7 @@ or directly from the Lambda console.
 
 - `"<ecr-image-uri>"`: The URI of the ECR image with the code of the Lambda function.
 - `"<lambda-execution-role>"`: The Lambda execution role ARN.
-- 
+
 ```python
 import boto3
 
