@@ -1,7 +1,9 @@
 # Zero-Shot Time Series Forecasting with Chronos using Amazon Bedrock and ClickHouse
 
-<image src="https://machine-learning-blog.s3.eu-west-2.amazonaws.com/chronos_bedrock/architecture_diagram.png" style="width:90%">
-</image>
+<img 
+    src="https://machine-learning-blog.s3.eu-west-2.amazonaws.com/chronos_bedrock/architecture_diagram.png" 
+    style="width:90%"
+>
 
 ## Overview
 
@@ -34,8 +36,10 @@ doesn't require any domain adaptation, the same solution can be applied to any o
 
 **`total_load_data`**
 
-<image src="https://machine-learning-blog.s3.eu-west-2.amazonaws.com/chronos_bedrock/time_series_data.png" style="width:50%">
-</image>
+<img 
+    src="https://machine-learning-blog.s3.eu-west-2.amazonaws.com/chronos_bedrock/time_series_data.png" 
+    style="width:50%"
+>
 
 **Note:** To be able to run the code below, you will need to have Boto3 and the AWS-CLI installed on your machine. 
 You will also need to update several variables in the code to reflect your AWS 
@@ -246,7 +250,7 @@ with the AWS-CLI as shown in the `build_and_push.sh` script below.
 - `"<ecr-repository-region>"`:  The region of the ECR repository. 
 - `"<ecr-repository-name>"`: The name of the ECR repository. 
 
-```commandline
+```
 aws_account_id="<aws-account-id>"
 region="<ecr-repository-region>"
 algorithm_name="<ecr-repository-name>"
@@ -396,13 +400,17 @@ forecasts = invoke_lambda_function(
 
 **`predictions`**
 
-<image src="https://machine-learning-blog.s3.eu-west-2.amazonaws.com/chronos_bedrock/predictions_table.png" style="width:70%">
-</image>
+<img
+    src="https://machine-learning-blog.s3.eu-west-2.amazonaws.com/chronos_bedrock/predictions_table.png" 
+    style="width:70%"
+>
 
 **`forecasts`**
 
-<image src="https://machine-learning-blog.s3.eu-west-2.amazonaws.com/chronos_bedrock/forecasts_table.png" style="width:70%">
-</image>
+<img 
+    src="https://machine-learning-blog.s3.eu-west-2.amazonaws.com/chronos_bedrock/forecasts_table.png"
+    style="width:70%"
+>
 
 ### 4. Compare the forecasts to the historical data stored in ClickHouse
 Now that the forecasts have been generated, we can compare them to the historical data stored in ClickHouse. 
@@ -450,5 +458,7 @@ the model produces accurate forecasts for the subsequent Sunday
 and correctly anticipates an increase in energy demand on the following Monday,
 highlighting its strength in capturing complex temporal patterns. 
 
-<image src="https://machine-learning-blog.s3.eu-west-2.amazonaws.com/chronos_bedrock/forecasts_plot.png" style="width:90%">
-</image>
+<img
+    src="https://machine-learning-blog.s3.eu-west-2.amazonaws.com/chronos_bedrock/forecasts_plot.png" 
+    style="width:90%"
+>
