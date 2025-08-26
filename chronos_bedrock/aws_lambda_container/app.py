@@ -79,15 +79,15 @@ def handler(event, context):
     
     # Add the timestamps to the forecasts
     predictions = {
-                      "timestamp": [
-                          x.strftime("%Y-%m-%d %H:%M:%S")
-                          for x in pd.date_range(
-                              start=event["initialization_timestamp"],
-                              periods=event["prediction_length"],
-                              freq=f"{event['frequency']}min",
-                          )
-                      ]
-                  } | predictions
+        "timestamp": [
+            x.strftime("%Y-%m-%d %H:%M:%S")
+            for x in pd.date_range(
+                start=event["initialization_timestamp"],
+                periods=event["prediction_length"],
+                freq=f"{event['frequency']}min"
+            )
+        ]
+    } | predictions
     
     # Return the forecasts
     return {
