@@ -56,9 +56,7 @@ def handler(event, context):
     )
     
     # Create the Bedrock client
-    bedrock_runtime_client = boto3.client(
-        service_name="bedrock-runtime"
-    )
+    bedrock_runtime_client = boto3.client("bedrock-runtime")
     
     # Invoke the Bedrock endpoint with the ClickHouse data
     response = bedrock_runtime_client.invoke_model(
