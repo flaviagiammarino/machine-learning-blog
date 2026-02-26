@@ -31,11 +31,11 @@ def handler(event, context):
     context: AWS Lambda context object, see https://docs.aws.amazon.com/lambda/latest/dg/python-context.html.
     """
     # Create the Secrets Manager client
-    secret_manager_client = boto3.client("secretsmanager")
+    secrets_manager_client = boto3.client("secretsmanager")
     
     # Retrieve the ClickHouse credentials from Secrets Manager
     credentials = json.loads(
-        secret_manager_client.get_secret_value(
+        secrets_manager_client.get_secret_value(
             SecretId="<clickhouse-secret-name>"
         ).get("SecretString")
     )
