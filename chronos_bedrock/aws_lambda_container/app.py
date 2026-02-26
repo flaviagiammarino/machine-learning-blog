@@ -36,7 +36,7 @@ def handler(event, context):
     # Retrieve the ClickHouse credentials from Secrets Manager
     credentials = json.loads(
         secret_manager_client.get_secret_value(
-            SecretId="clickhouse"
+            SecretId="<clickhouse-secret-name>"
         ).get("SecretString")
     )
     
