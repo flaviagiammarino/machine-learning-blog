@@ -49,7 +49,7 @@ def handler(event, context):
         secure=True
     )
     
-    # Load the input data from ClickHouse
+    # Load the context data from ClickHouse
     df = clickhouse_client.query_df(
         query=f"""
             select
