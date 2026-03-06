@@ -98,7 +98,4 @@ def handler(event, context):
     )
     
     # Return the forecasts
-    return {
-        "statusCode": 200,
-        "body": json.dumps(predictions)
-    }
+    return predictions
