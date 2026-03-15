@@ -132,6 +132,7 @@ def visualize_data(
     
     # Generate the subplots
     for i, series in enumerate(data):
+        # Plot the forecasts
         if series in forecasts:
             # Extract the predicted quantiles
             q = sorted([float(k) for k in forecasts[series] if k not in ("mean", "timestamp")])
@@ -177,7 +178,7 @@ def visualize_data(
                 col=1
             )
             
-            # Plot the median if available, otherwise fall back to the mean
+            # Plot the predicted median if available, otherwise fall back to the predicted mean
             fig.add_trace(
                 go.Scatter(
                     x=forecasts[series]["timestamp"],
@@ -196,7 +197,7 @@ def visualize_data(
                 col=1
             )
         
-        # Plot the historical data
+        # Plot the data
         fig.add_trace(
             go.Scatter(
                 x=parsed_data[series]["timestamp"],
