@@ -32,6 +32,7 @@ def generate_forecasts(
 
     Returns:
     ===============================================================================
+    dict
         Dictionary with predicted mean and quantiles at each future time step.
     """
     # Create the Bedrock client
