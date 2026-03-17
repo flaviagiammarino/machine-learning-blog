@@ -20,8 +20,8 @@ def visualize_data(
     inputs: dict
 ) -> str:
     """
-    Plot one or more time series with optional forecasts and return an HTML iframe
-    embedding the interactive chart.
+    Plot one or more time series with optional forecasts and return
+    the URL of the interactive HTML chart.
 
     Parameters
     ===============================================================================
@@ -82,7 +82,7 @@ def visualize_data(
     Returns
     ===============================================================================
     str
-        An HTML iframe element embedding the interactive chart.
+        The URL of the interactive HTML chart.
     """
     # Extract the data and forecasts
     data = inputs["data"]
