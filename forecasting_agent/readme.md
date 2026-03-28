@@ -1,4 +1,4 @@
-# Building a time series forecasting agent with Amazon Chronos and Amazon Bedrock AgentCore
+# Building a time series forecasting agent with Amazon Bedrock AgentCore
 
 **Date:** 26 March 2026
 
