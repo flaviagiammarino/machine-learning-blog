@@ -1,7 +1,5 @@
 # Forecasting Inflation with AutoML in Amazon SageMaker Autopilot
 
-**Date:** 20 March 2025
-
 **Category:** AutoML
 
 **Tags:** Time Series Forecasting, Amazon SageMaker

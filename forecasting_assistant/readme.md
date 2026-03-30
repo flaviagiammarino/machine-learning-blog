@@ -1,7 +1,5 @@
 # Building a time series forecasting assistant with Amazon Bedrock and LibreChat
 
-**Date:** 15 March 2026
-
 **Category:** Time Series Foundation Models
 
 **Tags:** Time Series Forecasting, Amazon Chronos, Amazon Bedrock, LibreChat

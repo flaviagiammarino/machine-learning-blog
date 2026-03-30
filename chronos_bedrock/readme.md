@@ -1,7 +1,5 @@
 # Zero-shot time series forecasting with Chronos using Amazon Bedrock and ClickHouse
 
-**Date:** 22 August 2025
-
 **Category:** Time Series Foundation Models
 
 **Tags:** Time Series Forecasting, Amazon Chronos, Amazon Bedrock
